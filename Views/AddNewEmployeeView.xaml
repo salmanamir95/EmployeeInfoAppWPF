@@ -1,0 +1,571 @@
+﻿<UserControl x:Class="EmployeeInfoApp.Views.AddNewEmployeeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:converters="clr-namespace:EmployeeInfoApp.Converters"
+             Background="#0D0D0D">
+
+    <UserControl.Resources>
+        <!-- Cyberpunk Color Palette -->
+        <SolidColorBrush x:Key="NeonGreen" Color="#39FF14"/>
+        <SolidColorBrush x:Key="NeonPink" Color="#FF00FF"/>
+        <SolidColorBrush x:Key="NeonBlue" Color="#00FFFF"/>
+        <SolidColorBrush x:Key="DarkCard" Color="#121212"/>
+        <SolidColorBrush x:Key="TextColor" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="HintColor" Color="#999999"/>
+        <SolidColorBrush x:Key="AccentPurple" Color="#8A2BE2"/>
+        <SolidColorBrush x:Key="InputBackground" Color="#1E1E1E"/>
+        <SolidColorBrush x:Key="DropdownBackground" Color="#1A1A1A"/>
+
+        <!-- Futuristic Typography -->
+        <FontFamily x:Key="CyberFont">Segoe UI, Arial</FontFamily>
+        <FontFamily x:Key="HeaderFont">Orbitron, Segoe UI, Arial</FontFamily>
+
+        <!-- Glow Effects -->
+        <DropShadowEffect x:Key="NeonGlow" BlurRadius="15" Color="#39FF14" Opacity="0.8" ShadowDepth="0"/>
+        <DropShadowEffect x:Key="NeonPinkGlow" BlurRadius="15" Color="#FF00FF" Opacity="0.6" ShadowDepth="0"/>
+        <DropShadowEffect x:Key="NeonBlueGlow" BlurRadius="15" Color="#00FFFF" Opacity="0.6" ShadowDepth="0"/>
+
+        <!-- Converters -->
+        <converters:GenderConverter x:Key="GenderConverter"/>
+        <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+
+        <!-- Section Header Style -->
+        <Style x:Key="SectionHeader" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource NeonBlue}"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0,20,0,10"/>
+            <Setter Property="FontFamily" Value="{StaticResource HeaderFont}"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="10" Color="#00FFFF" Opacity="0.4"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Button Template -->
+        <ControlTemplate x:Key="CyberButtonTemplate" TargetType="Button">
+            <Border x:Name="border" 
+                    Background="Transparent"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="2">
+                <Grid>
+                    <ContentPresenter x:Name="content" 
+                                      HorizontalAlignment="Center" 
+                                      VerticalAlignment="Center"/>
+                    <Rectangle x:Name="glowRect" 
+                               Opacity="0" 
+                               Fill="{TemplateBinding BorderBrush}" 
+                               RadiusX="2" RadiusY="2"/>
+                </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="border" Property="Background" Value="#1139FF14"/>
+                    <Setter TargetName="glowRect" Property="Opacity" Value="0.3"/>
+                    <Setter TargetName="glowRect" Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect BlurRadius="15" Color="#39FF14" Opacity="0.8"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter TargetName="content" Property="RenderTransform">
+                        <Setter.Value>
+                            <TranslateTransform Y="1"/>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter TargetName="glowRect" Property="Opacity" Value="0.6"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <!-- ComboBox Toggle Button Template -->
+        <ControlTemplate x:Key="ComboBoxToggleButtonTemplate" TargetType="ToggleButton">
+            <Border Background="{StaticResource InputBackground}"
+                    BorderBrush="#444"
+                    BorderThickness="0,0,0,1"
+                    Height="36">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="30"/>
+                    </Grid.ColumnDefinitions>
+                    <ContentPresenter Grid.Column="0" 
+                                      Content="{TemplateBinding Content}"
+                                      HorizontalAlignment="Left"
+                                      VerticalAlignment="Center"
+                                      Margin="10,0,0,0"/>
+                    <Path x:Name="Arrow"
+                          Grid.Column="1"
+                          Fill="{StaticResource HintColor}"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Data="M0,0 L4,4 8,0 Z"/>
+                </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="{StaticResource NeonBlue}"/>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter TargetName="Arrow" Property="Data" Value="M0,4 L4,0 8,4 Z"/>
+                    <Setter TargetName="Arrow" Property="Fill" Value="{StaticResource NeonGreen}"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <!-- Input Field Style -->
+        <Style x:Key="CyberInput" TargetType="Control">
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="#444"/>
+            <Setter Property="BorderThickness" Value="0,0,0,2"/>
+            <Setter Property="Margin" Value="0,5,0,15"/>
+            <Setter Property="FontFamily" Value="{StaticResource CyberFont}"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+
+        <!-- TextBox Style -->
+        <Style x:Key="CyberTextBox" TargetType="TextBox" BasedOn="{StaticResource CyberInput}">
+            <Setter Property="Background" Value="{StaticResource InputBackground}"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="CaretBrush" Value="{StaticResource NeonGreen}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="2">
+                            <Grid>
+                                <ScrollViewer x:Name="PART_ContentHost"
+                                              Background="Transparent"
+                                              Foreground="{TemplateBinding Foreground}"
+                                              Padding="{TemplateBinding Padding}"
+                                              BorderThickness="0"/>
+                                <TextBlock x:Name="placeholder" 
+                                           Text="{TemplateBinding materialDesign:HintAssist.Hint}"
+                                           Foreground="{StaticResource HintColor}"
+                                           Margin="{TemplateBinding Padding}"
+                                           Visibility="Collapsed"
+                                           IsHitTestVisible="False"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Text" Value="">
+                                <Setter TargetName="placeholder" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="Text" Value="{x:Null}">
+                                <Setter TargetName="placeholder" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="{StaticResource NeonBlue}"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="{StaticResource NeonGreen}"/>
+                                <Setter Property="Effect" Value="{StaticResource NeonGlow}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- DatePicker Style -->
+        <Style x:Key="CyberDatePicker" TargetType="DatePicker">
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="Background" Value="{StaticResource InputBackground}"/>
+            <Setter Property="BorderBrush" Value="#444"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="Margin" Value="0,5,0,15"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontFamily" Value="{StaticResource CyberFont}"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DatePicker">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="2">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="30"/>
+                                </Grid.ColumnDefinitions>
+                                <DatePickerTextBox x:Name="PART_TextBox"
+                                                   Grid.Column="0"
+                                                   Style="{StaticResource CyberTextBox}"
+                                                   Text="{Binding SelectedDate, RelativeSource={RelativeSource AncestorType={x:Type DatePicker}}, StringFormat='dd/MM/yyyy'}"
+                                                   materialDesign:HintAssist.Hint="Select date"
+                                                   VerticalContentAlignment="Center"
+                                                   Padding="10,0,0,0"/>
+                                <Button x:Name="PART_Button"
+                                        Grid.Column="1"
+                                        Content="📅"
+                                        Foreground="{StaticResource NeonGreen}"
+                                        Background="Transparent"
+                                        BorderBrush="Transparent"
+                                        FontSize="18"
+                                        Width="30"
+                                        Height="36"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalAlignment="Stretch"
+                                        Focusable="False"
+                                        ClickMode="Press"/>
+                                <Popup x:Name="PART_Popup"
+                                       Placement="Bottom"
+                                       AllowsTransparency="True"
+                                       PopupAnimation="Slide"
+                                       IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                       StaysOpen="False">
+                                    <Border Background="{StaticResource DropdownBackground}"
+                                            BorderBrush="#444"
+                                            BorderThickness="1"
+                                            CornerRadius="0,0,5,5">
+                                        <Calendar x:Name="PART_Calendar"
+                                                  Style="{DynamicResource MaterialDesignCalendar}"
+                                                  Background="{StaticResource DropdownBackground}"
+                                                  Foreground="{StaticResource TextColor}"/>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="{StaticResource NeonBlue}"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="{StaticResource NeonGreen}"/>
+                                <Setter Property="Effect" Value="{StaticResource NeonGlow}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ComboBox Style -->
+        <Style x:Key="CyberComboBox" TargetType="ComboBox">
+            <Setter Property="Background" Value="{StaticResource InputBackground}"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="BorderBrush" Value="#444"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="Margin" Value="0,5,0,15"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="FontFamily" Value="{StaticResource CyberFont}"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="10,0,0,0"/>
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ComboBoxItem">
+                        <Setter Property="Background" Value="{StaticResource DropdownBackground}"/>
+                        <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Padding" Value="10,5"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ComboBoxItem">
+                                    <Border x:Name="ItemBorder"
+                                            Background="{TemplateBinding Background}"
+                                            BorderThickness="{TemplateBinding BorderThickness}">
+                                        <ContentPresenter Margin="{TemplateBinding Padding}"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsHighlighted" Value="True">
+                                            <Setter TargetName="ItemBorder" Property="Background" Value="#333366"/>
+                                            <Setter Property="Foreground" Value="{StaticResource NeonBlue}"/>
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="ItemBorder" Property="Background" Value="#2A2A2A"/>
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="ItemBorder" Property="Background" Value="#333366"/>
+                                            <Setter Property="Foreground" Value="{StaticResource NeonGreen}"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton x:Name="ToggleButton"
+                                          Template="{StaticResource ComboBoxToggleButtonTemplate}"
+                                          Content="{TemplateBinding SelectionBoxItem}"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                          Focusable="False"
+                                          ClickMode="Press"/>
+                            <Popup x:Name="PART_Popup"
+                                   Placement="Bottom"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   PopupAnimation="Slide"
+                                   MinWidth="530">
+                                <Border x:Name="DropDownBorder"
+                                        Background="{StaticResource DropdownBackground}"
+                                        BorderBrush="#444"
+                                        BorderThickness="1"
+                                        CornerRadius="0,0,5,5"
+                                        MaxHeight="200">
+                                    <ScrollViewer Margin="4,6,4,6">
+                                        <ItemsPresenter />
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="{StaticResource NeonBlue}"/>
+                            </Trigger>
+                            <Trigger Property="IsDropDownOpen" Value="True">
+                                <Setter Property="BorderBrush" Value="{StaticResource NeonGreen}"/>
+                                <Setter Property="Effect" Value="{StaticResource NeonGlow}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- RadioButton Style -->
+        <Style x:Key="CyberRadioButton" TargetType="RadioButton">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontFamily" Value="{StaticResource HeaderFont}"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Margin" Value="0,0,20,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Grid Width="20" Height="20" Margin="0,0,5,0">
+                                <Ellipse x:Name="outer" 
+                                         Stroke="{StaticResource HintColor}" 
+                                         StrokeThickness="1" 
+                                         Fill="Transparent"/>
+                                <Ellipse x:Name="inner" 
+                                         Fill="{StaticResource NeonGreen}" 
+                                         Opacity="0" 
+                                         Width="10" Height="10"/>
+                            </Grid>
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="outer" Property="Stroke" Value="{StaticResource NeonGreen}"/>
+                                <Setter TargetName="outer" Property="Effect" Value="{StaticResource NeonGlow}"/>
+                                <Setter TargetName="inner" Property="Opacity" Value="1"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="outer" Property="Stroke" Value="{StaticResource NeonBlue}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Button Style -->
+        <Style x:Key="CyberButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource NeonGreen}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource NeonGreen}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Width" Value="160"/>
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontFamily" Value="{StaticResource HeaderFont}"/>
+            <Setter Property="Template" Value="{StaticResource CyberButtonTemplate}"/>
+        </Style>
+
+        <!-- CheckBox Style -->
+        <Style x:Key="CyberCheckBox" TargetType="CheckBox">
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontFamily" Value="{StaticResource HeaderFont}"/>
+            <Setter Property="Margin" Value="0,20,0,10"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <StackPanel Orientation="Horizontal">
+                            <Grid x:Name="box" Width="22" Height="22" Margin="0,0,10,0">
+                                <Rectangle x:Name="outer" 
+                                           Stroke="{StaticResource HintColor}" 
+                                           StrokeThickness="1" 
+                                           Fill="Transparent" 
+                                           RadiusX="2" RadiusY="2"/>
+                                <Path x:Name="check" 
+                                      Data="M0,5 L5,10 L12,0" 
+                                      Stroke="{StaticResource NeonGreen}" 
+                                      StrokeThickness="2" 
+                                      Stretch="Fill"
+                                      Visibility="Collapsed"/>
+                            </Grid>
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="check" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="outer" Property="Stroke" Value="{StaticResource NeonGreen}"/>
+                                <Setter TargetName="outer" Property="Effect" Value="{StaticResource NeonGlow}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="outer" Property="Stroke" Value="{StaticResource NeonBlue}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="#0D0D0D">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="20">
+            <Border Background="{StaticResource DarkCard}"
+                    BorderBrush="{StaticResource NeonPink}"
+                    BorderThickness="1"
+                    CornerRadius="5"
+                    Padding="25"
+                    MaxWidth="550"
+                    HorizontalAlignment="Center"
+                    Effect="{StaticResource NeonPinkGlow}">
+
+                <StackPanel>
+                    <!-- Cyberpunk Title -->
+                    <StackPanel HorizontalAlignment="Center" Margin="0,0,0,30">
+                        <TextBlock Text="ADD NEW EMPLOYEE"
+                                   FontSize="28"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource NeonGreen}"
+                                   FontFamily="{StaticResource HeaderFont}"
+                                   Effect="{StaticResource NeonGlow}"/>
+                        <Rectangle Height="2" Fill="{StaticResource NeonGreen}" Margin="0,5,0,0" Opacity="0.7"/>
+                    </StackPanel>
+
+                    <!-- Personal Info Section -->
+                    <TextBlock Text="PERSONAL INFORMATION" 
+                               Style="{StaticResource SectionHeader}"/>
+
+                    <TextBlock Text="Full Name" Foreground="{StaticResource HintColor}" Margin="0,0,0,-5"/>
+                    <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource CyberTextBox}" 
+                             materialDesign:HintAssist.Hint="Enter full name"/>
+                    <TextBlock Text="{Binding NameError}" 
+                               Foreground="Red" 
+                               Margin="0,-10,0,5"
+                               Visibility="{Binding NameError, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+                    <TextBlock Text="Father's Name" Foreground="{StaticResource HintColor}" Margin="0,10,0,-5"/>
+                    <TextBox Text="{Binding FatherName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource CyberTextBox}" 
+                             materialDesign:HintAssist.Hint="Enter father's name"/>
+                    <TextBlock Text="{Binding FatherNameError}" 
+                               Foreground="Red" 
+                               Margin="0,-10,0,5"
+                               Visibility="{Binding FatherNameError, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+                    <TextBlock Text="CNIC" Foreground="{StaticResource HintColor}" Margin="0,10,0,-5"/>
+                    <TextBox Text="{Binding CNIC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource CyberTextBox}" 
+                             materialDesign:HintAssist.Hint="XXXXX-XXXXXXX-X"/>
+                    <TextBlock Text="{Binding CNICError}" 
+                               Foreground="Red" 
+                               Margin="0,-10,0,5"
+                               Visibility="{Binding CNICError, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+                    <TextBlock Text="Date of Birth" Foreground="{StaticResource HintColor}" Margin="0,10,0,-5"/>
+                    <DatePicker SelectedDate="{Binding DOB, Mode=TwoWay}"
+                                Style="{StaticResource CyberDatePicker}"/>
+                    <TextBlock Text="{Binding DOBError}" 
+                               Foreground="Red" 
+                               Margin="0,-10,0,5"
+                               Visibility="{Binding DOBError, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+                    <!-- Gender Section -->
+                    <TextBlock Text="GENDER" Style="{StaticResource SectionHeader}"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                        <RadioButton Content="MALE" 
+                                     GroupName="Gender" 
+                                     Style="{StaticResource CyberRadioButton}"
+                                     IsChecked="{Binding Gender, Converter={StaticResource GenderConverter}, ConverterParameter=M, Mode=TwoWay}"/>
+                        <RadioButton Content="FEMALE" 
+                                     GroupName="Gender" 
+                                     Style="{StaticResource CyberRadioButton}"
+                                     IsChecked="{Binding Gender, Converter={StaticResource GenderConverter}, ConverterParameter=F, Mode=TwoWay}"/>
+                    </StackPanel>
+                    <TextBlock Text="{Binding GenderError}" 
+                               Foreground="Red" 
+                               Margin="0,-10,0,5"
+                               Visibility="{Binding GenderError, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+                    <!-- Job Info Section -->
+                    <TextBlock Text="JOB INFORMATION" Style="{StaticResource SectionHeader}"/>
+
+                    <TextBlock Text="Designation" Foreground="{StaticResource HintColor}" Margin="0,0,0,-5"/>
+                    <TextBox Text="{Binding Designation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource CyberTextBox}" 
+                             materialDesign:HintAssist.Hint="Enter designation"/>
+                    <TextBlock Text="{Binding DesignationError}" 
+                               Foreground="Red" 
+                               Margin="0,-10,0,5"
+                               Visibility="{Binding DesignationError, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+                    <TextBlock Text="Department" Foreground="{StaticResource HintColor}" Margin="0,10,0,-5"/>
+                    <ComboBox ItemsSource="{Binding Departments}"
+                              SelectedItem="{Binding Department, Mode=TwoWay}"
+                              Style="{StaticResource CyberComboBox}" 
+                              materialDesign:HintAssist.Hint="Select department"/>
+                    <TextBlock Text="{Binding DepartmentError}" 
+                               Foreground="Red" 
+                               Margin="0,-10,0,5"
+                               Visibility="{Binding DepartmentError, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+                    <CheckBox IsChecked="{Binding IsManager, Mode=TwoWay}" 
+                              Content="IS MANAGER?" 
+                              Style="{StaticResource CyberCheckBox}"/>
+                    <TextBlock Text="{Binding IsManagerError}" 
+                               Foreground="Red" 
+                               Margin="0,-10,0,5"
+                               Visibility="{Binding IsManagerError, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+                    <!-- View Employees Button -->
+                    <Button Content="VIEW EMPLOYEES"
+                            Style="{StaticResource CyberButton}"
+                            Margin="0,20,0,10"
+                            HorizontalAlignment="Center"
+                            Click="ViewEmployeesButton_Click"/>
+
+                    <!-- Submit Button -->
+                    <Button Command="{Binding SubmitCommand}"
+                            Content="SUBMIT DATA" 
+                            Style="{StaticResource CyberButton}"
+                            Margin="0,10,0,10"
+                            HorizontalAlignment="Center"/>
+
+                    <!-- Cyberpunk Terminal Footer -->
+                    <Grid Margin="0,20,0,0">
+                        <Rectangle Height="1" Fill="#333" HorizontalAlignment="Stretch"/>
+                        <TextBlock Text="CYBER SYSTEMS INC © 2077" 
+                                   Foreground="#444" 
+                                   FontFamily="{StaticResource HeaderFont}"
+                                   FontSize="10"
+                                   HorizontalAlignment="Center"
+                                   Background="{StaticResource DarkCard}"
+                                   Padding="10,0"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
